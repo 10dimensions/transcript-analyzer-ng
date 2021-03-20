@@ -66,15 +66,23 @@ export default class AnalyzerComponent implements OnInit, AfterViewInit {
 
     fetchTranscriptForCall(call_id: string){
 
+      if(transcriptmockdata.call_id !== call_id)  return;
 
+      const DATA: any[] = [];
+
+      for (let i = 0; i < transcriptmockdata.script.length; i++){
+
+        let _script = transcriptmockdata.script[i];
 
       DATA.push({
-            time: `${('0' + min).slice(-2)}:${('0' + sec).slice(-2)}`,
-            speaker: SPEAKERS[Math.floor(Math.random() * (SPEAKERS.length))],
-            sentence: `This is a sample sentence #${i + 1}`
+            time: ``,
+            speaker: ``,
+            sentence: transcriptmockdata.script[i].sentence,
+            match: `${_script.similarity*100} % matching with line # '${_script.matching_sentence}'`,
         });
-      
+      }
 
+      this.dataSourceRep.data = DATA;
     }
 }
 

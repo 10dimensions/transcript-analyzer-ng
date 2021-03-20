@@ -36,6 +36,7 @@ mat-card {
     }
 
     &-sentence:not(.mat-header-cell) {
+        
         .matcher {
             background: rgba(#5A5A71, .2);
             transition: background .2s;
@@ -53,4 +54,5 @@ tr.mat-row {
 
 td.mat-cell {
     border-bottom: none;
+    padding: 10px;
 }
