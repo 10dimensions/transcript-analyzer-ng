@@ -7,6 +7,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import {MatSliderModule} from '@angular/material/slider';
+
+import { FormsModule } from '@angular/forms';
 
 import { CoreModule } from '../../../core/core.module';
 
@@ -26,7 +29,9 @@ import { ROUTES } from './analyzer.routes';
         MatIconModule,
         MatSelectModule,
         MatTableModule,
-        MatTooltipModule
+        MatTooltipModule,
+        MatSliderModule,
+        FormsModule,
     ],
     bootstrap: [AnalyzerComponent]
 })

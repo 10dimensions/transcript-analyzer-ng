@@ -20,6 +20,9 @@
 
         <div id="intensity-selection" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="24px">
             MATCHING SENSITIVITY
+            <mat-slider min="0" max="100" step="1" value="38" [(ngModel)]="value"></mat-slider>
+            <h5>{{value + '%'}}</h5>
+
         </div>
     </div>
 </ng-template>
