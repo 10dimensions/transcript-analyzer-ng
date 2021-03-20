@@ -48,7 +48,7 @@
                 <ng-container matColumnDef="sentence">
                     <th mat-header-cell *matHeaderCellDef>Sentence</th>
                     <td mat-cell *matCellDef="let transcript">
-                        <div class="matcher" matTooltip="61% matching with line #1 'This is a sample sentence #76'" matTooltipPosition="above">
+                        <div class="matcher" [matTooltip]="transcript.match" matTooltipPosition="above">
                             {{ transcript.sentence }}
                         </div>
                     </td>

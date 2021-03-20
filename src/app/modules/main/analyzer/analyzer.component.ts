@@ -7,6 +7,7 @@ import TemplateService from '../../../core/services/template.service';
 import callsmockdata from './data/calls-mock-data.json';
 import agentsmockdata from './data/agents-mock-data.json';
 import transcriptmockdata from './data/transcript-mock-data.json';
+import { isFunction } from 'rxjs/internal-compatibility';
 
 @Component({
     selector: 'app-analyzer',
@@ -17,6 +18,8 @@ export default class AnalyzerComponent implements OnInit, AfterViewInit {
 
   agentsList : any[] = agentsmockdata;
   callsList: any[] = [];
+  agentSelected : any = null;
+  customerSelected: any = null;
 
     displayedColumns: string[] = [
         'time',
@@ -50,8 +53,8 @@ export default class AnalyzerComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
 
-        this.dataSource.data = MOCK_DATA();
-        this.dataSourceRep.data = MOCK_DATA().slice(-25);
+        this.dataSource.data = [];
+        this.dataSourceRep.data = [];
     }
 
     ngAfterViewInit(): void {
@@ -62,57 +65,66 @@ export default class AnalyzerComponent implements OnInit, AfterViewInit {
       this.callsList = callsmockdata.filter(function (el) {
         return el.agent[0].agent_id == agent_id;
       });
+
+      this.agentSelected = this.agentsList.find(x => x.agent_id === agent_id)
     }
 
     fetchTranscriptForCall(call_id: string){
 
-      if(transcriptmockdata.call_id !== call_id)  return;
+      if(transcriptmockdata.call_id !== call_id)  return;      
 
-      const DATA: any[] = [];
+      this.dataSourceRep.data = DATA_EXPECTED();
+      this.dataSource.data = DATA_REAL(this.agentSelected);
 
-      for (let i = 0; i < transcriptmockdata.script.length; i++){
-
-        let _script = transcriptmockdata.script[i];
-
-      DATA.push({
-            time: ``,
-            speaker: ``,
-            sentence: transcriptmockdata.script[i].sentence,
-            match: `${_script.similarity*100} % matching with line # '${_script.matching_sentence}'`,
-        });
-      }
-
-      this.dataSourceRep.data = DATA;
     }
 }
 
-const MOCK_DATA = () => {
-    const DATA: any[] = [];
+const DATA_EXPECTED = () => {
 
-    const SPEAKERS: string[] = agentsmockdata.map(function(item) {return item['full_name']});
+  const DATA: any[] = [];
+  for (let i = 0; i < transcriptmockdata.script.length; i++){
 
-    return DATA;
+    let _script = transcriptmockdata.script[i];
 
-    // const SPEAKERS: string[] = [
-    //     'Harvey',
-    //     'Luke',
-    //     'Unknown'
-    // ];
+    DATA.push({
+      time: ``,
+      speaker: ``,
+      sentence: _script.sentence,
+      match: `${_script.similarity*100} % matching with line # '${_script.matching_sentence}'`,
+    });
+  }
 
-    let currentTime = 30;
-
-    for (let i = 0; i < 100; i++) {
-        const min = Math.floor(currentTime / 60);
-        const sec = Math.floor(currentTime - min * 60);
-
-        DATA.push({
-            time: `${('0' + min).slice(-2)}:${('0' + sec).slice(-2)}`,
-            speaker: SPEAKERS[Math.floor(Math.random() * (SPEAKERS.length))],
-            sentence: `This is a sample sentence #${i + 1}`
-        });
-
-        currentTime += (Math.random() *  10) + 5;
-    }
-
-    return DATA;
+  return DATA;
 };
+
+const DATA_REAL = (agentSelected: any) => {
+
+  const DATA: any[] = [];
+  const agentChannel: number = transcriptmockdata.agent[0].channel_no;
+  const customerChannel: number = transcriptmockdata.customer[0].channel_no;
+  const customerName: string = transcriptmockdata.customer[0].full_name;
+
+  for (let i = 0; i < transcriptmockdata.transcript.length; i++){
+
+    let _script = transcriptmockdata.transcript[i];
+
+    let _speaker = '';
+
+    if(_script.channel === agentChannel)
+      _speaker = agentSelected.full_name
+    else if(_script.channel === customerChannel)
+      _speaker = customerName
+    else
+      _speaker = 'Unknown'
+
+    DATA.push({
+      time: new Date(_script.timeFrom * 1000).toISOString().substr(14, 5),
+      speaker: _speaker,
+      sentence: _script.sentence,
+      match: `${_script.similarity*100} % matching with line # '${_script.matching_sentence}'`,
+    });
+  }
+
+  return DATA;
+};
+
