@@ -1,0 +1,102 @@
+<ng-template #subHeader [formGroup]="form">
+    <div class=flex>
+        <div id="call-selection">
+            <mat-form-field floatLabel="never">
+                <mat-label>Agent</mat-label>
+                <mat-icon matPrefix>supervised_user_circle</mat-icon>
+                <mat-select disableOptionCentering formControlName="agent" panelClass="dropdown" (selectionChange)="fetchCallsForAgent($event.value)">
+                  <mat-option *ngFor="let agent of agentsList" [value]="agent.agent_id">{{agent.full_name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        
+            <mat-form-field floatLabel="never">
+                <mat-label>Call</mat-label>
+                <mat-icon matPrefix>phone</mat-icon>
+                <mat-select disableOptionCentering formControlName="call">
+                  <mat-option *ngFor="let call of callsList" [value]="call.call_id">{{call.call_start_time.split(" ")[0] + ' ' + call.customer[0].full_name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <div id="intensity-selection" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="24px">
+            MATCHING SENSITIVITY
+        </div>
+    </div>
+</ng-template>
+
+<section class="content" fxLayout="row" fxFlex="grow" fxLayoutAlign="space-between strech" fxLayoutGap="24px">
+    <mat-card fxFlex="grow">
+        <mat-card-header>
+            <mat-card-title>Real</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <table mat-table [dataSource]="dataSource" width="100%">
+                <ng-container matColumnDef="time">
+                    <th mat-header-cell *matHeaderCellDef>Time</th>
+                    <td mat-cell *matCellDef="let transcript">
+                        {{ transcript.time }}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="speaker">
+                    <th mat-header-cell *matHeaderCellDef>Speaker</th>
+                    <td mat-cell *matCellDef="let transcript">
+                        {{ transcript.speaker }}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="sentence">
+                    <th mat-header-cell *matHeaderCellDef>Sentence</th>
+                    <td mat-cell *matCellDef="let transcript">
+                        <div class="matcher" matTooltip="61% matching with line #1 'This is a sample sentence #76'" matTooltipPosition="above">
+                            {{ transcript.sentence }}
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </mat-card-content>
+    </mat-card>
+    <mat-card fxFlex="grow">
+        <mat-card-header>
+            <mat-card-title>Expected</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <table mat-table [dataSource]="dataSourceRep" width="100%">
+                <ng-container matColumnDef="time">
+                    <th mat-header-cell *matHeaderCellDef>Line</th>
+                    <td mat-cell *matCellDef="let transcript; let i = index">
+                        {{ i + 1 }}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="speaker">
+                    <th mat-header-cell *matHeaderCellDef>Speaker</th>
+                    <td mat-cell *matCellDef="let transcript">
+                        Rep
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="sentence">
+                    <th mat-header-cell *matHeaderCellDef>Sentence</th>
+                    <td mat-cell *matCellDef="let transcript">
+                        <div class="matcher" matTooltip="61% matching with line #3 'This is a sample sentence #3'" matTooltipPosition="above">
+                            {{ transcript.sentence }}
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </mat-card-content>
+    </mat-card>
+</section>
+
+<ng-template>
+    <div class="empty-state">
+        No data to be displayed
+    </div>
+</ng-template>
